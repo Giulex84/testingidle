@@ -1,40 +1,5 @@
-module.exports = async function handler(req, res) {
-  console.log("--- RICHIESTA U2A RICEVUTA ---");
-  console.log("Corpo della richiesta:", JSON.stringify(req.body));
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Metodo non consentito" });
-  }
-
-  const { action, paymentId, txid } = req.body;
-  const PI_API_KEY = process.env.PI_API_KEY;
-  const BASE_URL = "https://api.minepi.com/v2/payments";
-
-  try {
-    // Se stiamo completando, attendiamo 3 secondi per evitare tx_parsing_failed
-    if (action === "complete") {
-      console.log("Attesa sincronizzazione blockchain per ID:", paymentId);
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    }
-
-    const endpoint = `${BASE_URL}/${paymentId}/${action}`;
-    console.log("Chiamata API Pi Network a:", endpoint);
-
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Authorization": `Key ${PI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: action === "complete" ? JSON.stringify({ txid }) : undefined,
-    });
-
-    const data = await response.json();
-    console.log("Risposta da Pi API:", JSON.stringify(data));
-
-    return res.status(response.status).json(data);
-  } catch (error) {
-    console.error("ERRORE CRITICO BACKEND:", error.message);
-    return res.status(500).json({ error: "Errore interno del server", details: error.message });
-  }
-};
+const {bearer,verifyToken,getPayment,piPost,validateBoost}=require("../lib/pi");const store=require("../lib/store");
+module.exports=async function(req,res){if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});try{const token=bearer(req);if(!token)return res.status(401).json({error:"Missing Pi access token"});const user=await verifyToken(token);if(!store.configured())return res.status(503).json({error:"Persistent store unavailable"});const {action,paymentId,txid,era}=req.body||{};if(!["approve","complete","recover"].includes(action)||!paymentId||!["foundations","bronze","iron"].includes(era))return res.status(400).json({error:"Invalid payment request"});let payment=await getPayment(paymentId);const invalid=validateBoost(payment,user.uid,era);if(invalid)return res.status(400).json({error:invalid});await store.claimPayment(user.uid,paymentId);
+if(action==="approve"){if(payment.status?.developer_approved)return res.status(200).json({ok:true,idempotent:true});const {response,data}=await piPost(`/payments/${encodeURIComponent(paymentId)}/approve`);if(!response.ok)return res.status(response.status).json({error:data?.error||"Approval failed"});return res.status(200).json({ok:true});}
+if(action==="complete"&&!payment.status?.developer_completed){if(!txid)return res.status(400).json({error:"Missing transaction id"});const {response,data}=await piPost(`/payments/${encodeURIComponent(paymentId)}/complete`,{txid});if(!response.ok&&!String(data?.error||"").includes("already_completed"))return res.status(response.status).json({error:data?.error||"Completion failed"});}
+payment=await getPayment(paymentId);const invalid2=validateBoost(payment,user.uid,era);if(invalid2)return res.status(400).json({error:invalid2});if(!payment.status?.developer_completed||!payment.status?.transaction_verified)return res.status(409).json({error:"Payment is not fully verified yet",pending:true});await store.grantBoost(user.uid,era,paymentId);return res.status(200).json({ok:true,hasBoost:true});}catch(e){return res.status(400).json({error:e.message||"Payment error"});}};
