@@ -14,6 +14,7 @@ Playable eras currently include Foundations, Bronze Age, Iron Age, Medieval Age 
 - **Authentication:** Pi SDK authentication followed by server-side token verification.
 - **Game state:** server-authoritative state stored per Pi user; the browser is not trusted as the source of truth.
 - **Payments:** User-to-App purchases and App-to-User Test-Pi rewards are approved, completed, recovered and deduplicated server-side.
+- **Private telemetry:** `/admin.html` is owner-only and reports pseudonymous daily users plus aggregate logins, game actions, era advances, verified boost sales and rewards.
 
 ## Payment safety
 
@@ -31,4 +32,4 @@ This repository is the Testnet laboratory. Mainnet configuration, production Pi 
 
 See `privacy.html` and `terms.html` for the current Testnet privacy policy and terms of service.
 
-Last updated: September 8, 2026.
+Last updated: September 22, 2026.
