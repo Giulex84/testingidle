@@ -2,7 +2,7 @@
   "name": "testing-idle",
   "version": "1.0.0",
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^12.1.0"
