@@ -2,8 +2,9 @@
 
 ## Prepared persistence correction — 27 October 2026
 
-Local candidate based on upstream `7cca17a5e183f46266b3632a0333687e58868689`;
-not deployed. Login, polling and actions save against the exact snapshot they
+Testnet correction based on upstream `7cca17a5e183f46266b3632a0333687e58868689`.
+Publication authorized on 27 October 2026; isolated real Redis validation passed
+on Vercel. Authenticated Pi Browser acceptance remains pending. Login, polling and actions save against the exact snapshot they
 read. An obsolete request receives HTTP 409 instead of replacing newer progress.
 Unreadable or unsupported saved data receives HTTP 503 and is preserved for review.
 New realms are created only when the key is absent. Identical commit retries

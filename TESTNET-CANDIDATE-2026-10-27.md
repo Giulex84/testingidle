@@ -1,6 +1,11 @@
 # Idle Realm Testnet — candidate for review
 
-Status: prepared locally, not pushed, deployed or verified in Pi Browser.
+Status: Testnet publication authorized; isolated real Redis validation passed.
+Authenticated Pi Browser acceptance is pending.
+
+The preparation notes below describe the initial local checks. Their real-Redis
+release gate was subsequently satisfied by the isolated Vercel validation;
+manual device checks remain open.
 Source: Giulex84/testingidle at 7cca17a5e183f46266b3632a0333687e58868689.
 
 ## Change
@@ -55,3 +60,13 @@ The validation does not call Pi APIs, read user records, change credentials or
 reset any database. It deletes only its own temporary test keys.
 The previous deployment and source commit remain the code rollback reference.
 Final deployment status and manual acceptance are recorded separately.
+
+## Real Redis validation evidence
+
+- Validation deployment: dpl_3iPMXpuaaNQC3MMeFHihddzQLuwE.
+- Reviewed implementation commit: 6cab72db1af11150517ee8e7eacd8b9a62f70d80.
+- Build output confirmed: PASS isolated real Redis persistence checks and cleanup.
+- Keys were confined to a random audit:testnet namespace; no user records or Pi payments were used.
+- Previous domain deployment for code rollback: dpl_2wAEHxCLyyqSztgkFQUicYbQg6J2.
+- Changes to Mainnet, credentials, database configuration or product prices: none.
+- User trial: single owner account; two-person authorization checks remain a separate manual gate.
