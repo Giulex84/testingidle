@@ -1,6 +1,9 @@
 {
   "name": "testing-idle",
   "version": "1.0.0",
+  "scripts": {
+    "test": "node --test tests/persistence.test.cjs"
+  },
   "engines": {
     "node": "24.x"
   }

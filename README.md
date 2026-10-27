@@ -1,5 +1,21 @@
 # Idle Realm Testnet
 
+## Prepared persistence correction — 27 October 2026
+
+Local candidate based on upstream `7cca17a5e183f46266b3632a0333687e58868689`;
+not deployed. Login, polling and actions save against the exact snapshot they
+read. An obsolete request receives HTTP 409 instead of replacing newer progress.
+Unreadable or unsupported saved data receives HTTP 503 and is preserved for review.
+New realms are created only when the key is absent. Identical commit retries
+are accepted without rewriting a later, different state. Prices, gameplay rules,
+payment/reward routes, Testnet namespaces and SDK mode are unchanged.
+
+Run `npm test` with Node.js 24, Python 3 and a local Lua 5.3/5.4 shared library.
+The tests intercept every HTTP request and execute the production Lua script
+against a small in-memory command model. They use dummy credentials only;
+this is not a real Redis or Upstash integration test. No package installation
+or live connection is required. See `TESTNET-CANDIDATE-2026-10-27.md` for gates.
+
 Idle Realm Testnet is the gameplay and payment laboratory for the future Mainnet version of Idle Realm on Pi Network.
 
 ## Current campaign
